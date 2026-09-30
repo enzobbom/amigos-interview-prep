@@ -1,4 +1,4 @@
-package com.amigoscode.interview.exception;
+package com.amigoscode.interview.book.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -12,8 +12,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-@ControllerAdvice
-public class GlobalExceptionHandler {
+@ControllerAdvice(
+        basePackages = "com.amigoscode.interview.book"
+)
+public class BookGlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleRequestBodyValidationError(
@@ -36,6 +38,7 @@ public class GlobalExceptionHandler {
         errorResponse.put("timestamp", Instant.now().toString());
         errorResponse.put("status", httpStatus.value());
         errorResponse.put("error", httpStatus.name());
+        errorResponse.put("message", "");
         errorResponse.put("path", request.getServletPath());
         errorResponse.put("details", fieldErrors);
 

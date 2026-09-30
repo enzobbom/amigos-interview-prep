@@ -1,5 +1,6 @@
 package com.amigoscode.interview.author;
 
+import com.amigoscode.interview.author.exception.AuthorWithBooksDeletionException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -37,6 +38,11 @@ public class AuthorService {
 
     public void deleteAuthor(Long id) {
         Author author = getAuthorById(id);
+
+        if (!author.getBooks().isEmpty()) {
+            throw new AuthorWithBooksDeletionException("Author '" + id + "' has books and therefore cannot be deleted");
+        }
+
         authorRepository.delete(author);
     }
 

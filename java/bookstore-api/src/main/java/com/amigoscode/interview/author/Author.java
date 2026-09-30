@@ -30,9 +30,7 @@ public class Author {
 
     private LocalDateTime createdAt;
 
-    @OneToMany(
-            mappedBy = "author",
-            cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "author")
     @JsonIgnoreProperties({"author", "reviews"})
     private List<Book> books = new ArrayList<>();
 
