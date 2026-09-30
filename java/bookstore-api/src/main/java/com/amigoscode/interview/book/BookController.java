@@ -42,5 +42,12 @@ public class BookController {
     }
 
     // NOTE: GET /api/books/{id} is intentionally missing — interview task #1
+    @GetMapping("/{id}")
+    public ResponseEntity<Book> getBookById(@PathVariable Long id) {
+        Optional<Book> optional = bookService.getBookById(id);
 
+        return optional.map(
+                book -> new ResponseEntity<>(book, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
 }

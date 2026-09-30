@@ -3,6 +3,7 @@ package com.amigoscode.interview.book;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BookService {
@@ -36,4 +37,7 @@ public class BookService {
 
     // NOTE: getBookById() is intentionally missing — interview task #1
 
+    public Optional<Book> getBookById(Long id) {
+        return bookRepository.findById(id);
+    }
 }
