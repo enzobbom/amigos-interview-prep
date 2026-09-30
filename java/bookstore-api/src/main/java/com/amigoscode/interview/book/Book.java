@@ -49,7 +49,9 @@ public class Book {
     @JsonIgnoreProperties({"books"})
     private Author author;
 
-    @OneToMany(mappedBy = "book")
+    @OneToMany(
+            mappedBy = "book",
+            cascade = CascadeType.ALL)
     @JsonIgnoreProperties({"book"})
     private List<Review> reviews = new ArrayList<>();
 

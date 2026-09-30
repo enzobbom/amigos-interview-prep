@@ -2,12 +2,7 @@ package com.amigoscode.interview.author;
 
 import com.amigoscode.interview.book.Book;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,7 +30,9 @@ public class Author {
 
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "author")
+    @OneToMany(
+            mappedBy = "author",
+            cascade = CascadeType.ALL)
     @JsonIgnoreProperties({"author", "reviews"})
     private List<Book> books = new ArrayList<>();
 
