@@ -46,4 +46,15 @@ public class BookController {
                 book -> new ResponseEntity<>(book, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<Book>> searchBooks(
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String genre,
+            @RequestParam(required = false) String authorName) {
+
+        List<Book> books = bookService.searchBooks(title, genre, authorName);
+
+        return new ResponseEntity<>(books, HttpStatus.OK);
+    }
 }

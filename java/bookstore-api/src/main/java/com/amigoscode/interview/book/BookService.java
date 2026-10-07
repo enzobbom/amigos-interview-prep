@@ -40,4 +40,12 @@ public class BookService {
     public Optional<Book> getBookById(Long id) {
         return bookRepository.findById(id);
     }
+
+    public List<Book> searchBooks(String title, String genre, String authorName) {
+        title = (title == null || title.isBlank()) ? null : title;
+        genre = (genre == null || genre.isBlank()) ? null : genre;
+        authorName = (authorName == null || authorName.isBlank()) ? null : authorName;
+
+        return bookRepository.findBooksByFilters(title, genre, authorName);
+    }
 }
