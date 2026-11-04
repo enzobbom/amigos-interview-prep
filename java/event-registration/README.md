@@ -1,6 +1,6 @@
 # Event Registration — Live Coding Practice
 
-Build the core of an event booking system: validate participants against event requirements,
+Build the core of an event booking system: validate participants against event parsedRequirements,
 enforce capacity, manage a first-in-first-out waitlist, and promote the next participant when a
 place becomes available. It tests state transitions, validation, ordering, and careful handling of
 duplicates. Time box: **35 minutes**.

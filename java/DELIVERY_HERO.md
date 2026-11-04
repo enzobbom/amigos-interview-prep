@@ -102,7 +102,7 @@ These are asked out loud. Each is covered in the "Questions to Ask Afterwards" o
 
 ## System design (separate round, senior and above)
 
-Not coded here. Practise these on a whiteboard: clarify requirements, rough numbers, the simplest design that
+Not coded here. Practise these on a whiteboard: clarify parsedRequirements, rough numbers, the simplest design that
 works, data model, bottlenecks, failure modes. Start with Postgres + Redis + HTTP and add Kafka only when you
 can justify it. A 2026 candidate was rejected for over-engineering with Kafka, Protobuf and gRPC.
 

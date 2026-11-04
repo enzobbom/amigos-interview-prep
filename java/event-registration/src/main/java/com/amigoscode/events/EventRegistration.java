@@ -9,10 +9,7 @@ Story:
 Create events with capacity and requirements, then register eligible participants until the event reaches capacity.
  */
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /** Story 1 starts here. Keep confirmed registrations and the waitlist separate. */
 public final class EventRegistration {
@@ -27,21 +24,21 @@ public final class EventRegistration {
     private final Map<Event, Set<Participant>> eventsWaitLists = new HashMap<>();
 
     public boolean addEvent(String eventId, String eventType, int capacity, String requirements) {
-        if (eventId.isBlank() || eventType.isBlank() || capacity <= 0 || requirements.isBlank()) {
-            return false;
-        }
-
-        Event newEvent = new Event(
+        Optional<Event> newEvent = Event.create(
                 eventId,
                 eventType,
                 capacity,
                 requirements
         );
 
-        if (events.contains(newEvent)) {
+        if (newEvent.isEmpty()) {
             return false;
         }
-        events.add(newEvent);
+
+        if (events.contains(newEvent.get())) {
+            return false;
+        }
+        events.add(newEvent.get());
 
         return true;
     }

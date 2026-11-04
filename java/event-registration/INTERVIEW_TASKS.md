@@ -5,7 +5,7 @@ Sequential user stories, one at a time. Budget **35 minutes**.
 The public API is:
 
 ```java
-boolean addEvent(String eventId, String eventType, int capacity, String requirements)
+boolean addEvent(String eventId, String eventType, int capacity, String parsedRequirements)
 int registerParticipant(String eventId, String participantId, String email, String skillLevel)
 boolean cancelRegistration(String eventId, String participantId)
 String[] findRegisteredEvents(String participantId)
@@ -19,28 +19,28 @@ waitlisted entries.
 
 ## Task 1: Events and Valid Registration (10 min)
 
-**Story:** *Create events with capacity and requirements, then register eligible participants
+**Story:** *Create events with capacity and parsedRequirements, then register eligible participants
 until the event reaches capacity.*
 
 **Acceptance Criteria:**
 - `addEvent` returns `true` for a new valid event and `false` for a duplicate event id or invalid
   parameters; a rejected duplicate does not replace the original event
-- Event id and type must be non-blank, capacity must be positive, and requirements must be valid
-- With no requirements (`""`), any participant with a well-formed email and a supported skill
+- Event id and type must be non-blank, capacity must be positive, and parsedRequirements must be valid
+- With no parsedRequirements (`""`), any participant with a well-formed email and a supported skill
   level can register while capacity remains
 - `"business_email"` requires a well-formed email whose domain is not a common personal provider
   such as `gmail.com`, `yahoo.com`, `hotmail.com`, or `outlook.com`
 - `"skill_level:BEGINNER"`, `"skill_level:INTERMEDIATE"`, and `"skill_level:ADVANCED"` require
   an exact skill-level match
-- Multiple requirements are comma-separated and all must pass, for example
+- Multiple parsedRequirements are comma-separated and all must pass, for example
   `"business_email,skill_level:INTERMEDIATE"`
 - Unknown events, blank event or participant ids, malformed emails, unsupported skill levels,
-  malformed requirements, and unmet requirements return `false` from `addEvent` or `-1` from
+  malformed parsedRequirements, and unmet parsedRequirements return `false` from `addEvent` or `-1` from
   `registerParticipant`, as applicable
 - A successful registration returns `0`; registrations beyond capacity are handled in Task 2
 
 **Hints:**
-- Parse and validate requirements once when adding the event
+- Parse and validate parsedRequirements once when adding the event
 - Keep confirmed registrations and waitlisted participants as separate collections
 
 ---
@@ -101,7 +101,7 @@ If the interviewer asks for command-line input, each line contains one command w
 space-separated parameters:
 
 ```text
-addEvent <eventId> <eventType> <capacity> <requirements>
+addEvent <eventId> <eventType> <capacity> <parsedRequirements>
 registerParticipant <eventId> <participantId> <email> <skillLevel>
 cancelRegistration <eventId> <participantId>
 findRegisteredEvents <participantId>
@@ -114,7 +114,7 @@ The four API methods are the required deliverable; do not build the parser unles
 ## Questions to Ask Afterwards
 
 - Which data structures give constant-time duplicate checks while preserving waitlist order?
-- What should happen if requirements change after participants have joined the waitlist?
+- What should happen if parsedRequirements change after participants have joined the waitlist?
 - How would you make registration, cancellation, and promotion safe under concurrent requests?
 - How would you preserve the same behaviour with multiple service instances and a database?
 - Should promotion be transactional, and how would you notify the promoted participant?
