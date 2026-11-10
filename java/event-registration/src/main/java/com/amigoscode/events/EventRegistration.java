@@ -77,7 +77,13 @@ public final class EventRegistration {
             return -1;
         }
 
-        // get current participants of the event and check for availability, Put in the waiting list if full
+        // check if participant is allowed in this event
+
+        if (!event.isParticipantAllowed(participantId, skillLevel)) {
+            return -1;
+        }
+
+        // get current participants of the event and check for availability, put in the waiting list if full
 
         eventsParticipants.putIfAbsent(event, new HashSet<>());
         Set<Participant> eventParticipants = eventsParticipants.get(event);

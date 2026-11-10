@@ -13,6 +13,7 @@ public class Event {
     private static final String BUSINESS_EMAIL_REQUIREMENT_NAME = "business_email";
     private static final List<String> VALID_SKILL_LEVELS = List.of("BEGINNER", "INTERMEDIATE", "ADVANCED");
     private static final String SKILL_LEVEL_REQUIREMENT_WILDCARD = "any";
+    private static final List<String> INVALID_BUSINESS_EMAIL_DOMAINS = List.of("gmail.com", "outlook.com", "yahoo.com", "hotmail.com");
 
     private Event(String eventId, String eventType, int capacity, String requirements, Map<String, Object> parsedRequirements) {
         this.eventId = eventId;
@@ -70,6 +71,23 @@ public class Event {
     @Override
     public int hashCode() {
         return Objects.hash(eventId);
+    }
+
+    public boolean isParticipantAllowed(String participantEmail, String participantSkillLevel) {
+        if ((boolean) parsedRequirements.get(BUSINESS_EMAIL_REQUIREMENT_NAME)) {
+            for (String e : INVALID_BUSINESS_EMAIL_DOMAINS) {
+                if (participantEmail.contains(e)) {
+                    return false;
+                }
+            }
+        }
+
+        String eventSkillLevel = (String) parsedRequirements.get(SKILL_LEVEL_REQUIREMENT_NAME);
+        if (eventSkillLevel.equals(SKILL_LEVEL_REQUIREMENT_WILDCARD)) {
+            return true;
+        }
+
+        return participantSkillLevel.equals(eventSkillLevel);
     }
 
     private static Map<String, Object> parseRequirements(String requirements) {
