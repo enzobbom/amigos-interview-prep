@@ -21,26 +21,21 @@ public final class EventRegistration {
     // events participants and waitlist
 
     private final Map<Event, Set<Participant>> eventsParticipants = new HashMap<>();
-    private final Map<Event, Set<Participant>> eventsWaitLists = new HashMap<>();
+    private final Map<Event, Queue<Participant>> eventsWaitLists = new HashMap<>();
 
     public boolean addEvent(String eventId, String eventType, int capacity, String requirements) {
-        Optional<Event> newEvent = Event.create(
+        Optional<Event> optionalEvent = Event.create(
                 eventId,
                 eventType,
                 capacity,
                 requirements
         );
 
-        if (newEvent.isEmpty()) {
+        if (!optionalEvent.isPresent()) {
             return false;
         }
 
-        if (events.contains(newEvent.get())) {
-            return false;
-        }
-        events.add(newEvent.get());
-
-        return true;
+        return events.add(optionalEvent.get());
     }
 
     public int registerParticipant(String eventId, String participantId, String email, String skillLevel) {
@@ -68,18 +63,19 @@ public final class EventRegistration {
 
         // get the event
 
-        Event event = events.stream()
+        Optional<Event> optionalEvent = events.stream()
                 .filter(e -> e.getEventId().equals(eventId))
-                .findFirst()
-                .orElse(null);
+                .findFirst();
 
-        if (event == null) {
+        if (!optionalEvent.isPresent()) {
             return -1;
         }
 
+        Event event = optionalEvent.get();
+
         // check if participant is allowed in this event
 
-        if (!event.isParticipantAllowed(participantId, skillLevel)) {
+        if (!event.isParticipantAllowed(email, skillLevel)) {
             return -1;
         }
 
@@ -89,8 +85,8 @@ public final class EventRegistration {
         Set<Participant> eventParticipants = eventsParticipants.get(event);
 
         if (eventParticipants.size() >= event.getCapacity()) {
-            eventsWaitLists.putIfAbsent(event, new HashSet<>());
-            Set<Participant> eventWaitList = eventsWaitLists.get(event);
+            eventsWaitLists.putIfAbsent(event, new ArrayDeque<>());
+            Queue<Participant> eventWaitList = eventsWaitLists.get(event);
 
             eventWaitList.add(newParticipant);
             return eventWaitList.size();
