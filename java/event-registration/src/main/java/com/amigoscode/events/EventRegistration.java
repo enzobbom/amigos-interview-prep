@@ -63,10 +63,7 @@ public final class EventRegistration {
 
         // get the event
 
-        Optional<Event> optionalEvent = events.stream()
-                .filter(e -> e.getEventId().equals(eventId))
-                .findFirst();
-
+        Optional<Event> optionalEvent = getEventById(eventId);
         if (!optionalEvent.isPresent()) {
             return -1;
         }
@@ -105,19 +102,13 @@ public final class EventRegistration {
 
         // find event and participant
 
-        Optional<Event> optionalEvent = events.stream()
-                .filter(e -> e.getEventId().equals(eventId))
-                .findFirst();
-
+        Optional<Event> optionalEvent = getEventById(eventId);
         if (!optionalEvent.isPresent()) {
             return false;
         }
         Event event = optionalEvent.get();
 
-        Optional<Participant> optionalParticipant = participants.stream()
-                .filter(p -> p.getParticipantId().equals(participantId))
-                .findFirst();
-
+        Optional<Participant> optionalParticipant = getParticipantById(participantId);
         if (!optionalParticipant.isPresent()) {
             return false;
         }
@@ -146,5 +137,19 @@ public final class EventRegistration {
 
     public String[] findRegisteredEvents(String participantId) {
         throw new UnsupportedOperationException("story 4");
+    }
+
+    // helper methods
+
+    private Optional<Event> getEventById(String eventId) {
+        return events.stream()
+                .filter(e -> e.getEventId().equals(eventId))
+                .findFirst();
+    }
+
+    private Optional<Participant> getParticipantById(String participantId) {
+        return participants.stream()
+                .filter(p -> p.getParticipantId().equals(participantId))
+                .findFirst();
     }
 }
