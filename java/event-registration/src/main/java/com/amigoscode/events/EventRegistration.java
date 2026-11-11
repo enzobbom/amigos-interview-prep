@@ -15,15 +15,8 @@ import java.util.*;
  * Story 1 starts here. Keep confirmed registrations and the waitlist separate.
  */
 public final class EventRegistration {
-    // storage of events and participants
-
     private final Set<Event> events = new HashSet<>();
     private final Set<Participant> participants = new HashSet<>();
-
-    // events participants and waitlist
-
-    private final Map<Event, Set<Participant>> eventsParticipants = new HashMap<>();
-    private final Map<Event, Deque<Participant>> eventsWaitLists = new HashMap<>();
 
     public boolean addEvent(String eventId, String eventType, int capacity, String requirements) {
         Optional<Event> optionalEvent = Event.create(
@@ -94,25 +87,9 @@ public final class EventRegistration {
         }
         Participant participant = optionalParticipant.get();
 
-        // check if participant is within event list or waitlist
+        // remove participants with checks and promotion logic (wait list -> participants list)
 
-        Deque<Participant> waitList = eventsWaitLists.get(event);
-        if (waitList.removeFirstOccurrence(participant)) {
-            return true;
-        }
-
-        Set<Participant> participants = eventsParticipants.get(event);
-        if (!participants.remove(participant)) {
-            return false;
-        }
-
-        Optional<Participant> firstWaitListedParticipant = Optional.ofNullable(waitList.peek());
-
-        if (firstWaitListedParticipant.isEmpty()) {
-            return false;
-        }
-
-        return participants.add(waitList.pop());
+        return event.removeParticipant(participant);
     }
 
     public String[] findRegisteredEvents(String participantId) {

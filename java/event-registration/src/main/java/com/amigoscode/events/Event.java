@@ -94,7 +94,28 @@ public class Event {
         return 0;
     }
 
-    public boolean removeParticipant(String participantId) {
+    public boolean removeParticipant(Participant participant) {
+        /*
+        Rules:
+            - if participant is in the waiting list, it's simply removed
+            - if participant is in the participants list and there's no wait list, it's simply removed
+            - if participant is in the participants list and there's a waiting list, participant gets removed and someone
+                from the wait list gets promoted
+            - if participant is neither on the participants nor wait lists, then 'false' is returned
+         */
+
+        if (waitList.removeFirstOccurrence(participant)) {
+            return true;
+        }
+
+        if (!participants.remove(participant)) {
+            return false; // not in wait list nor in the participants list
+        }
+
+        if (!waitList.isEmpty()) {
+            participants.add(waitList.pop()); // add first wait listed participant to participants list
+        }
+
         return true;
     }
 
