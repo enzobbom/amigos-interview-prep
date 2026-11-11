@@ -11,6 +11,10 @@ public class ParticipantRepository {
         participants.add(participant);
     }
 
+    public void delete(Participant participant) {
+        participants.remove(participant);
+    }
+
     public boolean existsByIdAndEventId(String id, String eventId) {
         return participants.stream()
                 .anyMatch(p -> p.getParticipantId().equals(id)

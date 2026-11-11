@@ -93,7 +93,12 @@ public final class EventRegistration {
 
         // remove participants with checks and promotion logic (wait list -> participants list)
 
-        return event.removeParticipant(participant);
+        if (!event.removeParticipant(participant)) {
+            return false;
+        }
+
+        participantRepository.delete(participant);
+        return true;
     }
 
     public String[] findRegisteredEvents(String participantId) {
