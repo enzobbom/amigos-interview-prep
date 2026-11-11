@@ -21,7 +21,7 @@ public final class EventRegistration {
     // events participants and waitlist
 
     private final Map<Event, Set<Participant>> eventsParticipants = new HashMap<>();
-    private final Map<Event, Queue<Participant>> eventsWaitLists = new HashMap<>();
+    private final Map<Event, Deque<Participant>> eventsWaitLists = new HashMap<>();
 
     public boolean addEvent(String eventId, String eventType, int capacity, String requirements) {
         Optional<Event> optionalEvent = Event.create(
@@ -99,7 +99,49 @@ public final class EventRegistration {
     }
 
     public boolean cancelRegistration(String eventId, String participantId) {
-        throw new UnsupportedOperationException("story 3");
+        if (eventId.isBlank() || participantId.isBlank()) {
+            return false;
+        }
+
+        // find event and participant
+
+        Optional<Event> optionalEvent = events.stream()
+                .filter(e -> e.getEventId().equals(eventId))
+                .findFirst();
+
+        if (!optionalEvent.isPresent()) {
+            return false;
+        }
+        Event event = optionalEvent.get();
+
+        Optional<Participant> optionalParticipant = participants.stream()
+                .filter(p -> p.getParticipantId().equals(participantId))
+                .findFirst();
+
+        if (!optionalParticipant.isPresent()) {
+            return false;
+        }
+        Participant participant = optionalParticipant.get();
+
+        // check if participant is within event list or waitlist
+
+        Deque<Participant> waitList = eventsWaitLists.get(event);
+        if (waitList.removeFirstOccurrence(participant)) {
+            return true;
+        }
+
+        Set<Participant> participants = eventsParticipants.get(event);
+        if (!participants.remove(participant)) {
+            return false;
+        }
+
+        Optional<Participant> firstWaitListedParticipant = Optional.ofNullable(waitList.peek());
+
+        if (firstWaitListedParticipant.isEmpty()) {
+            return false;
+        }
+
+        return participants.add(waitList.pop());
     }
 
     public String[] findRegisteredEvents(String participantId) {
