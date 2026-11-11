@@ -15,8 +15,8 @@ import java.util.*;
  * Story 1 starts here. Keep confirmed registrations and the waitlist separate.
  */
 public final class EventRegistration {
-    private final Set<Event> events = new HashSet<>();
-    private final Set<Participant> participants = new HashSet<>();
+    private final EventRepository eventRepository = new EventRepository();
+    private final ParticipantRepository participantRepository = new ParticipantRepository();
 
     public boolean addEvent(String eventId, String eventType, int capacity, String requirements) {
         Optional<Event> optionalEvent = Event.create(
@@ -30,7 +30,14 @@ public final class EventRegistration {
             return false;
         }
 
-        return events.add(optionalEvent.get());
+        Event event = optionalEvent.get();
+        if (eventRepository.existsById(eventId)) {
+            return false;
+        }
+
+        eventRepository.save(event);
+
+        return true;
     }
 
     public int registerParticipant(String eventId, String participantId, String email, String skillLevel) {
@@ -48,17 +55,14 @@ public final class EventRegistration {
 
         // save new participant in case it didn't exist yet
 
-        if (participants.contains(newParticipant)) {
-            // if this check passes, it means the participant is brand new and therefore is not contained neither in events
-            // list nor wait lists
-
+        if (participantRepository.existsByIdAndEventId(participantId, eventId)) {
             return -1;
         }
-        participants.add(newParticipant);
+        participantRepository.save(newParticipant);
 
         // get the event
 
-        Optional<Event> optionalEvent = getEventById(eventId);
+        Optional<Event> optionalEvent = eventRepository.findById(eventId);
         if (!optionalEvent.isPresent()) {
             return -1;
         }
@@ -75,13 +79,13 @@ public final class EventRegistration {
 
         // find event and participant
 
-        Optional<Event> optionalEvent = getEventById(eventId);
+        Optional<Event> optionalEvent = eventRepository.findById(eventId);
         if (!optionalEvent.isPresent()) {
             return false;
         }
         Event event = optionalEvent.get();
 
-        Optional<Participant> optionalParticipant = getParticipantById(participantId);
+        Optional<Participant> optionalParticipant = participantRepository.findById(participantId);
         if (!optionalParticipant.isPresent()) {
             return false;
         }
@@ -94,19 +98,5 @@ public final class EventRegistration {
 
     public String[] findRegisteredEvents(String participantId) {
         throw new UnsupportedOperationException("story 4");
-    }
-
-    // helper methods
-
-    private Optional<Event> getEventById(String eventId) {
-        return events.stream()
-                .filter(e -> e.getEventId().equals(eventId))
-                .findFirst();
-    }
-
-    private Optional<Participant> getParticipantById(String participantId) {
-        return participants.stream()
-                .filter(p -> p.getParticipantId().equals(participantId))
-                .findFirst();
     }
 }

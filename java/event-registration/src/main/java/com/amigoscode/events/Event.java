@@ -79,9 +79,9 @@ public class Event {
     // participant management
 
     public int addParticipant(Participant participant) {
-        if (participants.contains(participant) ||
-                waitList.contains(participant) ||
-                !isParticipantAllowed(participant.getEmail(), participant.getSkillLevel())) {
+        if (participants.contains(participant)
+                || waitList.contains(participant)
+                || !isParticipantAllowed(participant.getEmail(), participant.getSkillLevel())) {
 
             return -1;
         }
