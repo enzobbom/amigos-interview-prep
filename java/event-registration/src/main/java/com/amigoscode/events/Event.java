@@ -9,6 +9,9 @@ public class Event {
     private final String requirements;
     private final Map<String, Object> parsedRequirements;
 
+    private final Set<Participant> participants = new HashSet<>();
+    private final Deque<Participant> waitList = new ArrayDeque<>();
+
     private static final String SKILL_LEVEL_REQUIREMENT_NAME = "skill_level";
     private static final String BUSINESS_EMAIL_REQUIREMENT_NAME = "business_email";
     private static final List<String> VALID_SKILL_LEVELS = List.of("BEGINNER", "INTERMEDIATE", "ADVANCED");
@@ -72,6 +75,30 @@ public class Event {
     public int hashCode() {
         return Objects.hash(eventId);
     }
+
+    // participant management
+
+    public int addParticipant(Participant participant) {
+        if (participants.contains(participant) ||
+                waitList.contains(participant) ||
+                !isParticipantAllowed(participant.getEmail(), participant.getSkillLevel())) {
+
+            return -1;
+        }
+
+        if (participants.size() >= capacity) {
+            waitList.add(participant);
+            return waitList.size();
+        }
+
+        return 0;
+    }
+
+    public boolean removeParticipant(String participantId) {
+        return true;
+    }
+
+    // internal methods
 
     public boolean isParticipantAllowed(String participantEmail, String participantSkillLevel) {
         if ((boolean) parsedRequirements.get(BUSINESS_EMAIL_REQUIREMENT_NAME)) {

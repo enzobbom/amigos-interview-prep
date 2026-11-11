@@ -11,7 +11,9 @@ Create events with capacity and requirements, then register eligible participant
 
 import java.util.*;
 
-/** Story 1 starts here. Keep confirmed registrations and the waitlist separate. */
+/**
+ * Story 1 starts here. Keep confirmed registrations and the waitlist separate.
+ */
 public final class EventRegistration {
     // storage of events and participants
 
@@ -39,8 +41,6 @@ public final class EventRegistration {
     }
 
     public int registerParticipant(String eventId, String participantId, String email, String skillLevel) {
-        // create and add participant to participants storage, if not exists
-
         Optional<Participant> optionalParticipant = Participant.create(
                 eventId,
                 participantId,
@@ -49,13 +49,18 @@ public final class EventRegistration {
         );
 
         if (optionalParticipant.isEmpty()) {
+            return -1;
+        }
+        Participant newParticipant = optionalParticipant.get();
+
+        // save new participant in case it didn't exist yet
+
+        if (participants.contains(newParticipant)) {
             // if this check passes, it means the participant is brand new and therefore is not contained neither in events
             // list nor wait lists
 
             return -1;
         }
-        Participant newParticipant = optionalParticipant.get();
-
         participants.add(newParticipant);
 
         // get the event
@@ -65,31 +70,9 @@ public final class EventRegistration {
             return -1;
         }
 
-        Event event = optionalEvent.get();
+        // add participant with checks on duplication and capacity
 
-        // check if participant is allowed in this event
-
-        if (!event.isParticipantAllowed(email, skillLevel)) {
-            return -1;
-        }
-
-        // get current participants of the event and check for availability, put in the waiting list if full
-
-        eventsParticipants.putIfAbsent(event, new HashSet<>());
-        Set<Participant> eventParticipants = eventsParticipants.get(event);
-
-        if (eventParticipants.size() >= event.getCapacity()) {
-            eventsWaitLists.putIfAbsent(event, new ArrayDeque<>());
-            Queue<Participant> eventWaitList = eventsWaitLists.get(event);
-
-            eventWaitList.add(newParticipant);
-            return eventWaitList.size();
-        }
-
-        // if all checks pass, simply register new participant to
-
-        eventParticipants.add(newParticipant);
-        return 0;
+        return optionalEvent.get().addParticipant(newParticipant);
     }
 
     public boolean cancelRegistration(String eventId, String participantId) {
