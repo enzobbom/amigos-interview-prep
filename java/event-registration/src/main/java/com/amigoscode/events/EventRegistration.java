@@ -31,7 +31,7 @@ public final class EventRegistration {
                 requirements
         );
 
-        if (!optionalEvent.isPresent()) {
+        if (optionalEvent.isEmpty()) {
             return false;
         }
 
@@ -39,25 +39,22 @@ public final class EventRegistration {
     }
 
     public int registerParticipant(String eventId, String participantId, String email, String skillLevel) {
-        if (eventId.isBlank() || participantId.isBlank() || email.isBlank() || skillLevel.isBlank()) {
-            return -1;
-        }
-
         // create and add participant to participants storage, if not exists
 
-        Participant newParticipant = new Participant(
+        Optional<Participant> optionalParticipant = Participant.create(
                 eventId,
                 participantId,
                 email,
                 skillLevel
         );
 
-        if (participants.contains(newParticipant)) {
-            // if this check passes, it means the participant is brand new and therefore is not contained neither in the
-            // eventsParticipants nor eventsWaitLists sets
+        if (optionalParticipant.isEmpty()) {
+            // if this check passes, it means the participant is brand new and therefore is not contained neither in events
+            // list nor wait lists
 
             return -1;
         }
+        Participant newParticipant = optionalParticipant.get();
 
         participants.add(newParticipant);
 
